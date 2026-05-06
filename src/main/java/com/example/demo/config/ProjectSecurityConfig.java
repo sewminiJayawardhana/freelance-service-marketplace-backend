@@ -19,10 +19,19 @@ public class ProjectSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable()) // CSRF disable කරන්න (Testing ලේසි වෙන්න)
-                .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/api/auth/**").permitAll() // /api/auth යටතේ එන ඔක්කොම (register/login) open කරනවා
-                        .anyRequest().authenticated());
+        http
+                .cors(cors -> cors.configurationSource(request -> {
+                    var corsConfiguration = new org.springframework.web.cors.CorsConfiguration();
+                    corsConfiguration.setAllowedOrigins(java.util.List.of("http://localhost:4200"));
+                    corsConfiguration.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                    corsConfiguration.setAllowedHeaders(java.util.List.of("*"));
+                    return corsConfiguration;
+                }))
+                .csrf(csrf -> csrf.disable()) // CSRF disable කරන්න මතක තියාගන්න
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/auth/**", "/api/jobs/**").permitAll() // jobs API එකට අවසර දුන්නා
+                        .anyRequest().authenticated()
+                );
         return http.build();
     }
 }
