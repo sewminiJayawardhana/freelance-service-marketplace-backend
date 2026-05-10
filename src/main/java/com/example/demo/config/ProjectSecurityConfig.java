@@ -29,7 +29,7 @@ public class ProjectSecurityConfig {
                 }))
                 .csrf(csrf -> csrf.disable()) // CSRF disable කරන්න මතක තියාගන්න
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/api/jobs/**").permitAll() // jobs API එකට අවසර දුන්නා
+                        .requestMatchers("/api/auth/**", "/api/jobs/**", "/api/applications/**").permitAll()
                         .anyRequest().authenticated()
                 );
         return http.build();
