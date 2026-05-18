@@ -22,4 +22,7 @@ public class Job {
     @ManyToOne
     @JoinColumn(name = "client_id", nullable = false)
     private User user; // මේකෙන් Job එක දාපු User ව සම්බන්ධ කරනවා
+
+    // field to store job status (OPEN/CLOSED)
+    private String status = "OPEN"; // Setting default value as OPEN
 }

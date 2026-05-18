@@ -56,4 +56,35 @@ public class ApplicationService {
     public List<Application> getApplicationsByFreelancer(Long freelancerId) {
         return applicationRepository.findByFreelancerId(freelancerId);
     }
+
+    /**
+     * Update the status of a specific job application.
+     * Automatically closes the job listing if the application is accepted.
+     */
+    @Transactional
+    public Application updateApplicationStatus(Long applicationId, String status) {
+        Application application = applicationRepository.findById(applicationId)
+                .orElseThrow(() -> new RuntimeException("Application not found"));
+
+        // Update the application status (ACCEPTED or REJECTED)
+        application.setStatus(status);
+
+        // If the client accepts the application, automatically mark the job as CLOSED
+        if ("ACCEPTED".equalsIgnoreCase(status)) {
+            Job job = application.getJob();
+            if (job != null) {
+                job.setStatus("CLOSED"); // Assuming your Job model has a 'status' field (e.g., OPEN/CLOSED)
+                jobRepository.save(job);
+            }
+        }
+
+        return applicationRepository.save(application);
+    }
+
+    /**
+     * Fetches all applications for a specific job post.
+     */
+    public List<Application> getApplicationsByJobId(Long jobId) {
+        return applicationRepository.findByJobId(jobId);
+    }
 }
